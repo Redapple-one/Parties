@@ -206,6 +206,12 @@ public abstract class PartyImpl implements Party {
 			plugin.getPartyManager().removePartyFromCache(this); // Remove from cache
 			plugin.getDatabaseManager().removeParty(this); // Remove from database
 			
+			// Cancel all pending invites to prevent players from joining a disbanded party
+			for (PartyInvite invite : inviteRequests) {
+				invite.revoke(false);
+			}
+			inviteRequests.clear();
+			
 			for (UUID uuid : getMembers()) {
 				PartyPlayerImpl pp = plugin.getPlayerManager().getPlayer(uuid);
 				pp.removeFromParty(true);
