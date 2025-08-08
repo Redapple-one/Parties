@@ -207,7 +207,7 @@ public abstract class PartyImpl implements Party {
 			plugin.getDatabaseManager().removeParty(this); // Remove from database
 			
 			// Cancel all pending invites to prevent players from joining a disbanded party
-			for (PartyInvite invite : inviteRequests) {
+			for (PartyInvite invite : new HashSet<>(inviteRequests)) {
 				invite.revoke(false);
 			}
 			inviteRequests.clear();
