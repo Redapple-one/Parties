@@ -2,21 +2,21 @@ package com.alessiodp.parties.bukkit.addons.external.skript.events;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.lang.Literal;
-import ch.njol.skript.lang.SelfRegisteringSkriptEvent;
+import ch.njol.skript.lang.SkriptEvent;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.Trigger;
 import ch.njol.skript.registrations.EventValues;
-import ch.njol.skript.util.Getter;
 import com.alessiodp.parties.api.events.bukkit.party.BukkitPartiesPartyGetExperienceEvent;
 import com.alessiodp.parties.api.events.bukkit.party.BukkitPartiesPartyLevelUpEvent;
 import com.alessiodp.parties.api.interfaces.Party;
 import org.bukkit.event.Event;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 @SuppressWarnings("NullableProblems")
-public class EvtPartyExperience extends SelfRegisteringSkriptEvent {
+public class EvtPartyExperience extends SkriptEvent {
 	static {
 		Skript.registerEvent("Party Get Experience", EvtPartyExperience.class, BukkitPartiesPartyGetExperienceEvent.class,
 				"party get[s] experience")
@@ -24,18 +24,8 @@ public class EvtPartyExperience extends SelfRegisteringSkriptEvent {
 				.examples("on party get experience:",
 						"\tmessage \"%event-party% got %event-number% experience\"")
 				.since("3.0.0");
-		EventValues.registerEventValue(BukkitPartiesPartyGetExperienceEvent.class, Party.class, new Getter<Party, BukkitPartiesPartyGetExperienceEvent>() {
-			@Override
-			public Party get(BukkitPartiesPartyGetExperienceEvent e) {
-				return e.getParty();
-			}
-		}, 0);
-		EventValues.registerEventValue(BukkitPartiesPartyGetExperienceEvent.class, Number.class, new Getter<Number, BukkitPartiesPartyGetExperienceEvent>() {
-			@Override
-			public Number get(BukkitPartiesPartyGetExperienceEvent e) {
-				return e.getExperience();
-			}
-		}, 0);
+		EventValues.registerEventValue(BukkitPartiesPartyGetExperienceEvent.class, Party.class, BukkitPartiesPartyGetExperienceEvent::getParty, EventValues.TIME_NOW);
+		EventValues.registerEventValue(BukkitPartiesPartyGetExperienceEvent.class, Number.class, BukkitPartiesPartyGetExperienceEvent::getExperience, EventValues.TIME_NOW);
 		
 		Skript.registerEvent("Party Level Up", EvtPartyExperience.class, BukkitPartiesPartyLevelUpEvent.class,
 				"party level[s] up")
@@ -43,21 +33,11 @@ public class EvtPartyExperience extends SelfRegisteringSkriptEvent {
 				.examples("on party level up:",
 						"\tmessage \"%event-party% leveled up to %event-number%\"")
 				.since("3.0.0");
-		EventValues.registerEventValue(BukkitPartiesPartyLevelUpEvent.class, Party.class, new Getter<Party, BukkitPartiesPartyLevelUpEvent>() {
-			@Override
-			public Party get(BukkitPartiesPartyLevelUpEvent e) {
-				return e.getParty();
-			}
-		}, 0);
-		EventValues.registerEventValue(BukkitPartiesPartyLevelUpEvent.class, Number.class, new Getter<Number, BukkitPartiesPartyLevelUpEvent>() {
-			@Override
-			public Number get(BukkitPartiesPartyLevelUpEvent e) {
-				return e.getNewLevel();
-			}
-		}, 0);
+		EventValues.registerEventValue(BukkitPartiesPartyLevelUpEvent.class, Party.class, BukkitPartiesPartyLevelUpEvent::getParty, EventValues.TIME_NOW);
+		EventValues.registerEventValue(BukkitPartiesPartyLevelUpEvent.class, Number.class, BukkitPartiesPartyLevelUpEvent::getNewLevel, EventValues.TIME_NOW);
 	}
 	
-	final static Collection<Trigger> triggers = new ArrayList<>();
+	private static final List<Trigger> TRIGGERS = Collections.synchronizedList(new ArrayList<>());
 	
 	@Override
 	public boolean init(Literal<?>[] args, int matchedPattern, SkriptParser.ParseResult parseResult) {
@@ -65,18 +45,19 @@ public class EvtPartyExperience extends SelfRegisteringSkriptEvent {
 	}
 	
 	@Override
-	public void register(Trigger trigger) {
-		triggers.add(trigger);
+	public boolean load() {
+		TRIGGERS.add(trigger);
+		return true;
 	}
 	
 	@Override
-	public void unregister(Trigger trigger) {
-		triggers.remove(trigger);
+	public void unload() {
+		TRIGGERS.remove(trigger);
 	}
 	
 	@Override
-	public void unregisterAll() {
-		triggers.clear();
+	public boolean check(Event event) {
+		throw new UnsupportedOperationException();
 	}
 	
 	@Override

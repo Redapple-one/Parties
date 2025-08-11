@@ -2,11 +2,10 @@ package com.alessiodp.parties.bukkit.addons.external.skript.events;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.lang.Literal;
-import ch.njol.skript.lang.SelfRegisteringSkriptEvent;
+import ch.njol.skript.lang.SkriptEvent;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.Trigger;
 import ch.njol.skript.registrations.EventValues;
-import ch.njol.skript.util.Getter;
 import com.alessiodp.parties.api.events.bukkit.party.BukkitPartiesPartyPostCreateEvent;
 import com.alessiodp.parties.api.events.bukkit.party.BukkitPartiesPartyPreCreateEvent;
 import com.alessiodp.parties.api.interfaces.Party;
@@ -16,10 +15,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 @SuppressWarnings("NullableProblems")
-public class EvtPartyCreate extends SelfRegisteringSkriptEvent {
+public class EvtPartyCreate extends SkriptEvent {
 	static {
 		Skript.registerEvent("Party Pre Create", EvtPartyCreate.class, BukkitPartiesPartyPreCreateEvent.class,
 				"[player] pre create[s] [a] party")
@@ -27,24 +27,9 @@ public class EvtPartyCreate extends SelfRegisteringSkriptEvent {
 				.examples("on pre create party:",
 						"\tmessage \"%event-partyplayer% is creating the party %event-string%\"")
 				.since("3.0.0");
-		EventValues.registerEventValue(BukkitPartiesPartyPreCreateEvent.class, String.class, new Getter<String, BukkitPartiesPartyPreCreateEvent>() {
-			@Override
-			public String get(BukkitPartiesPartyPreCreateEvent e) {
-				return e.getPartyName();
-			}
-		}, 0);
-		EventValues.registerEventValue(BukkitPartiesPartyPreCreateEvent.class, PartyPlayer.class, new Getter<PartyPlayer, BukkitPartiesPartyPreCreateEvent>() {
-			@Override
-			public PartyPlayer get(BukkitPartiesPartyPreCreateEvent e) {
-				return e.getPartyPlayer();
-			}
-		}, 0);
-		EventValues.registerEventValue(BukkitPartiesPartyPreCreateEvent.class, CommandSender.class, new Getter<CommandSender, BukkitPartiesPartyPreCreateEvent>() {
-			@Override
-			public CommandSender get(BukkitPartiesPartyPreCreateEvent e) {
-				return e.getPartyPlayer() != null ? Bukkit.getPlayer(e.getPartyPlayer().getPlayerUUID()) : Bukkit.getConsoleSender();
-			}
-		}, 0);
+		EventValues.registerEventValue(BukkitPartiesPartyPreCreateEvent.class, String.class, BukkitPartiesPartyPreCreateEvent::getPartyName, EventValues.TIME_NOW);
+		EventValues.registerEventValue(BukkitPartiesPartyPreCreateEvent.class, PartyPlayer.class, BukkitPartiesPartyPreCreateEvent::getPartyPlayer, EventValues.TIME_NOW);
+		EventValues.registerEventValue(BukkitPartiesPartyPreCreateEvent.class, CommandSender.class, e ->  e.getPartyPlayer() != null ? Bukkit.getPlayer(e.getPartyPlayer().getPlayerUUID()) : Bukkit.getConsoleSender(), EventValues.TIME_NOW);
 		
 		Skript.registerEvent("Party Post Create", EvtPartyCreate.class, BukkitPartiesPartyPostCreateEvent.class,
 				"[player] [post] create[s] [a] party")
@@ -52,27 +37,12 @@ public class EvtPartyCreate extends SelfRegisteringSkriptEvent {
 				.examples("on post create party:",
 						"\tmessage \"%event-partyplayer% created the party %event-party%\"")
 				.since("3.0.0");
-		EventValues.registerEventValue(BukkitPartiesPartyPostCreateEvent.class, Party.class, new Getter<Party, BukkitPartiesPartyPostCreateEvent>() {
-			@Override
-			public Party get(BukkitPartiesPartyPostCreateEvent e) {
-				return e.getParty();
-			}
-		}, 0);
-		EventValues.registerEventValue(BukkitPartiesPartyPostCreateEvent.class, PartyPlayer.class, new Getter<PartyPlayer, BukkitPartiesPartyPostCreateEvent>() {
-			@Override
-			public PartyPlayer get(BukkitPartiesPartyPostCreateEvent e) {
-				return e.getCreator();
-			}
-		}, 0);
-		EventValues.registerEventValue(BukkitPartiesPartyPostCreateEvent.class, CommandSender.class, new Getter<CommandSender, BukkitPartiesPartyPostCreateEvent>() {
-			@Override
-			public CommandSender get(BukkitPartiesPartyPostCreateEvent e) {
-				return e.getCreator() != null ? Bukkit.getPlayer(e.getCreator().getPlayerUUID()) : Bukkit.getConsoleSender();
-			}
-		}, 0);
+		EventValues.registerEventValue(BukkitPartiesPartyPostCreateEvent.class, Party.class, BukkitPartiesPartyPostCreateEvent::getParty, EventValues.TIME_NOW);
+		EventValues.registerEventValue(BukkitPartiesPartyPostCreateEvent.class, PartyPlayer.class, BukkitPartiesPartyPostCreateEvent::getCreator, EventValues.TIME_NOW);
+		EventValues.registerEventValue(BukkitPartiesPartyPostCreateEvent.class, CommandSender.class, e -> e.getCreator() != null ? Bukkit.getPlayer(e.getCreator().getPlayerUUID()) : Bukkit.getConsoleSender(), EventValues.TIME_NOW);
 	}
 	
-	final static Collection<Trigger> triggers = new ArrayList<>();
+	private static final List<Trigger> TRIGGERS = Collections.synchronizedList(new ArrayList<>());
 	
 	@Override
 	public boolean init(Literal<?>[] args, int matchedPattern, SkriptParser.ParseResult parseResult) {
@@ -80,18 +50,19 @@ public class EvtPartyCreate extends SelfRegisteringSkriptEvent {
 	}
 	
 	@Override
-	public void register(Trigger trigger) {
-		triggers.add(trigger);
+	public boolean load() {
+		TRIGGERS.add(trigger);
+		return true;
 	}
 	
 	@Override
-	public void unregister(Trigger trigger) {
-		triggers.remove(trigger);
+	public void unload() {
+		TRIGGERS.remove(trigger);
 	}
 	
 	@Override
-	public void unregisterAll() {
-		triggers.clear();
+	public boolean check(Event event) {
+		throw new UnsupportedOperationException();
 	}
 	
 	@Override

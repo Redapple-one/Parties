@@ -28,6 +28,7 @@ import java.util.Set;
 		version = VelocityConstants.VERSION,
 		dependencies = {
 				@Dependency(id = "lastloginapi", optional = true),
+				@Dependency(id = "premiumvanish", optional = true),
 				@Dependency(id = "redisbungee", optional = true)
 		}
 )

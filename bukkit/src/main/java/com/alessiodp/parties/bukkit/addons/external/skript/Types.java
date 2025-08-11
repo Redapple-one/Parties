@@ -1,16 +1,16 @@
 package com.alessiodp.parties.bukkit.addons.external.skript;
 
 import ch.njol.skript.classes.ClassInfo;
-import ch.njol.skript.classes.Converter;
 import ch.njol.skript.classes.Parser;
 import ch.njol.skript.expressions.base.EventValueExpression;
 import ch.njol.skript.lang.ParseContext;
 import ch.njol.skript.registrations.Classes;
-import ch.njol.skript.registrations.Converters;
 import com.alessiodp.parties.api.interfaces.Party;
 import com.alessiodp.parties.api.interfaces.PartyPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.skriptlang.skript.lang.converter.Converter;
+import org.skriptlang.skript.lang.converter.Converters;
 
 @SuppressWarnings("NullableProblems")
 public class Types {
@@ -81,6 +81,6 @@ public class Types {
 					}
 				})
 		);
-		Converters.registerConverter(PartyPlayer.class, OfflinePlayer.class, partyPlayer -> Bukkit.getOfflinePlayer(partyPlayer.getPlayerUUID()), Converter.NO_COMMAND_ARGUMENTS);
+		Converters.registerConverter(PartyPlayer.class, OfflinePlayer.class, partyPlayer -> Bukkit.getOfflinePlayer(partyPlayer.getPlayerUUID()), Converter.NO_CHAINING);
 	}
 }

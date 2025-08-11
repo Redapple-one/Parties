@@ -2,11 +2,10 @@ package com.alessiodp.parties.bukkit.addons.external.skript.events;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.lang.Literal;
-import ch.njol.skript.lang.SelfRegisteringSkriptEvent;
+import ch.njol.skript.lang.SkriptEvent;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.Trigger;
 import ch.njol.skript.registrations.EventValues;
-import ch.njol.skript.util.Getter;
 import com.alessiodp.parties.api.events.bukkit.party.BukkitPartiesPartyPostDeleteEvent;
 import com.alessiodp.parties.api.events.bukkit.party.BukkitPartiesPartyPreDeleteEvent;
 import com.alessiodp.parties.api.interfaces.Party;
@@ -16,10 +15,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 @SuppressWarnings("NullableProblems")
-public class EvtPartyDelete extends SelfRegisteringSkriptEvent {
+public class EvtPartyDelete extends SkriptEvent {
 	static {
 		Skript.registerEvent("Party Pre Delete", EvtPartyDelete.class, BukkitPartiesPartyPreDeleteEvent.class,
 				"[player] pre delete[s] [a] party")
@@ -27,24 +27,9 @@ public class EvtPartyDelete extends SelfRegisteringSkriptEvent {
 				.examples("on pre delete party:",
 						"\tmessage \"%event-partyplayer% is deleting the party %event-party%\"")
 				.since("3.0.0");
-		EventValues.registerEventValue(BukkitPartiesPartyPreDeleteEvent.class, Party.class, new Getter<Party, BukkitPartiesPartyPreDeleteEvent>() {
-			@Override
-			public Party get(BukkitPartiesPartyPreDeleteEvent e) {
-				return e.getParty();
-			}
-		}, 0);
-		EventValues.registerEventValue(BukkitPartiesPartyPreDeleteEvent.class, PartyPlayer.class, new Getter<PartyPlayer, BukkitPartiesPartyPreDeleteEvent>() {
-			@Override
-			public PartyPlayer get(BukkitPartiesPartyPreDeleteEvent e) {
-				return e.getCommandSender();
-			}
-		}, 0);
-		EventValues.registerEventValue(BukkitPartiesPartyPreDeleteEvent.class, CommandSender.class, new Getter<CommandSender, BukkitPartiesPartyPreDeleteEvent>() {
-			@Override
-			public CommandSender get(BukkitPartiesPartyPreDeleteEvent e) {
-				return e.getKickedPlayer() != null ? Bukkit.getPlayer(e.getKickedPlayer().getPlayerUUID()) : Bukkit.getConsoleSender();
-			}
-		}, 0);
+		EventValues.registerEventValue(BukkitPartiesPartyPreDeleteEvent.class, Party.class, BukkitPartiesPartyPreDeleteEvent::getParty, EventValues.TIME_NOW);
+		EventValues.registerEventValue(BukkitPartiesPartyPreDeleteEvent.class, PartyPlayer.class, BukkitPartiesPartyPreDeleteEvent::getCommandSender, EventValues.TIME_NOW);
+		EventValues.registerEventValue(BukkitPartiesPartyPreDeleteEvent.class, CommandSender.class, e ->  e.getKickedPlayer() != null ? Bukkit.getPlayer(e.getKickedPlayer().getPlayerUUID()) : Bukkit.getConsoleSender(), EventValues.TIME_NOW);
 		
 		Skript.registerEvent("Party Post Delete", EvtPartyDelete.class, BukkitPartiesPartyPostDeleteEvent.class,
 				"[player] [post] delete[s] [a] party")
@@ -52,27 +37,12 @@ public class EvtPartyDelete extends SelfRegisteringSkriptEvent {
 				.examples("on post delete party:",
 						"\tmessage \"%event-partyplayer% deleted the party %event-party%\"")
 				.since("3.0.0");
-		EventValues.registerEventValue(BukkitPartiesPartyPostDeleteEvent.class, Party.class, new Getter<Party, BukkitPartiesPartyPostDeleteEvent>() {
-			@Override
-			public Party get(BukkitPartiesPartyPostDeleteEvent e) {
-				return e.getParty();
-			}
-		}, 0);
-		EventValues.registerEventValue(BukkitPartiesPartyPostDeleteEvent.class, PartyPlayer.class, new Getter<PartyPlayer, BukkitPartiesPartyPostDeleteEvent>() {
-			@Override
-			public PartyPlayer get(BukkitPartiesPartyPostDeleteEvent e) {
-				return e.getCommandSender();
-			}
-		}, 0);
-		EventValues.registerEventValue(BukkitPartiesPartyPostDeleteEvent.class, CommandSender.class, new Getter<CommandSender, BukkitPartiesPartyPostDeleteEvent>() {
-			@Override
-			public CommandSender get(BukkitPartiesPartyPostDeleteEvent e) {
-				return e.getKickedPlayer() != null ? Bukkit.getPlayer(e.getKickedPlayer().getPlayerUUID()) : Bukkit.getConsoleSender();
-			}
-		}, 0);
+		EventValues.registerEventValue(BukkitPartiesPartyPostDeleteEvent.class, Party.class, BukkitPartiesPartyPostDeleteEvent::getParty, EventValues.TIME_NOW);
+		EventValues.registerEventValue(BukkitPartiesPartyPostDeleteEvent.class, PartyPlayer.class, BukkitPartiesPartyPostDeleteEvent::getCommandSender, EventValues.TIME_NOW);
+		EventValues.registerEventValue(BukkitPartiesPartyPostDeleteEvent.class, CommandSender.class, e ->  e.getKickedPlayer() != null ? Bukkit.getPlayer(e.getKickedPlayer().getPlayerUUID()) : Bukkit.getConsoleSender(), EventValues.TIME_NOW);
 	}
 	
-	final static Collection<Trigger> triggers = new ArrayList<>();
+	private static final List<Trigger> TRIGGERS = Collections.synchronizedList(new ArrayList<>());
 	
 	@Override
 	public boolean init(Literal<?>[] args, int matchedPattern, SkriptParser.ParseResult parseResult) {
@@ -80,18 +50,19 @@ public class EvtPartyDelete extends SelfRegisteringSkriptEvent {
 	}
 	
 	@Override
-	public void register(Trigger trigger) {
-		triggers.add(trigger);
+	public boolean load() {
+		TRIGGERS.add(trigger);
+		return true;
 	}
 	
 	@Override
-	public void unregister(Trigger trigger) {
-		triggers.remove(trigger);
+	public void unload() {
+		TRIGGERS.remove(trigger);
 	}
 	
 	@Override
-	public void unregisterAll() {
-		triggers.clear();
+	public boolean check(Event event) {
+		throw new UnsupportedOperationException();
 	}
 	
 	@Override

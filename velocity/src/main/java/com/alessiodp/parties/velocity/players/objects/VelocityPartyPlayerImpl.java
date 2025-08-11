@@ -4,6 +4,7 @@ import com.alessiodp.core.common.user.User;
 import com.alessiodp.parties.common.PartiesPlugin;
 import com.alessiodp.parties.common.configuration.data.ConfigParties;
 import com.alessiodp.parties.common.players.objects.PartyPlayerImpl;
+import com.alessiodp.parties.velocity.addons.external.VelocityPremiumVanishHandler;
 import com.alessiodp.parties.velocity.messaging.VelocityPartiesMessageDispatcher;
 
 import java.util.UUID;
@@ -48,6 +49,6 @@ public class VelocityPartyPlayerImpl extends PartyPlayerImpl {
 	
 	@Override
 	public boolean isVanished() {
-		return false;
+		return VelocityPremiumVanishHandler.isPlayerVanished(getPlayerUUID());
 	}
 }

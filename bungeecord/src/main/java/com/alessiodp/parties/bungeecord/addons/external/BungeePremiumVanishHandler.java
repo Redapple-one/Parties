@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 @RequiredArgsConstructor
-public class PremiumVanishHandler {
+public class BungeePremiumVanishHandler {
 	@NotNull private final PartiesPlugin plugin;
 	private static final String ADDON_NAME = "PremiumVanish";
 	

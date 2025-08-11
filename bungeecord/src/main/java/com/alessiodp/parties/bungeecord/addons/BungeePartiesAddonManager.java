@@ -4,7 +4,7 @@ import com.alessiodp.core.bungeecord.addons.external.BungeeRedisBungeeHandler;
 import com.alessiodp.parties.bungeecord.addons.external.BungeeAdvancedBanHandler;
 import com.alessiodp.parties.bungeecord.addons.external.BungeeChatHandler;
 import com.alessiodp.parties.bungeecord.addons.external.PartiesBungeeRedisBungeeHandler;
-import com.alessiodp.parties.bungeecord.addons.external.PremiumVanishHandler;
+import com.alessiodp.parties.bungeecord.addons.external.BungeePremiumVanishHandler;
 import com.alessiodp.parties.bungeecord.configuration.data.BungeeConfigMain;
 import com.alessiodp.parties.common.PartiesPlugin;
 import com.alessiodp.parties.common.addons.PartiesAddonManager;
@@ -12,7 +12,7 @@ import com.alessiodp.parties.common.addons.PartiesAddonManager;
 public class BungeePartiesAddonManager extends PartiesAddonManager {
 	private final BungeeAdvancedBanHandler advancedBanHandler;
 	private final BungeeChatHandler bungeeChat;
-	private final PremiumVanishHandler premiumVanish;
+	private final BungeePremiumVanishHandler premiumVanish;
 	private final BungeeRedisBungeeHandler redisBungee;
 	
 	public BungeePartiesAddonManager(PartiesPlugin plugin) {
@@ -20,7 +20,7 @@ public class BungeePartiesAddonManager extends PartiesAddonManager {
 		
 		advancedBanHandler = new BungeeAdvancedBanHandler(plugin);
 		bungeeChat = new BungeeChatHandler(plugin);
-		premiumVanish = new PremiumVanishHandler(plugin);
+		premiumVanish = new BungeePremiumVanishHandler(plugin);
 		redisBungee = new PartiesBungeeRedisBungeeHandler(plugin);
 	}
 	

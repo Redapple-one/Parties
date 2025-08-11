@@ -2,11 +2,10 @@ package com.alessiodp.parties.bukkit.addons.external.skript.events;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.lang.Literal;
-import ch.njol.skript.lang.SelfRegisteringSkriptEvent;
+import ch.njol.skript.lang.SkriptEvent;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.Trigger;
 import ch.njol.skript.registrations.EventValues;
-import ch.njol.skript.util.Getter;
 import com.alessiodp.parties.api.events.bukkit.party.BukkitPartiesPartyPostRenameEvent;
 import com.alessiodp.parties.api.events.bukkit.party.BukkitPartiesPartyPreRenameEvent;
 import com.alessiodp.parties.api.interfaces.Party;
@@ -16,10 +15,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 @SuppressWarnings("NullableProblems")
-public class EvtPartyRename extends SelfRegisteringSkriptEvent {
+public class EvtPartyRename extends SkriptEvent {
 	static {
 		Skript.registerEvent("Party Pre Rename", EvtPartyRename.class, BukkitPartiesPartyPreRenameEvent.class,
 				"[player] pre rename[s] [a] party")
@@ -27,30 +27,10 @@ public class EvtPartyRename extends SelfRegisteringSkriptEvent {
 				.examples("on pre rename party:",
 						"\tmessage \"Party %name of event-party% is getting renamed to %event-string%\"")
 				.since("3.0.0");
-		EventValues.registerEventValue(BukkitPartiesPartyPreRenameEvent.class, Party.class, new Getter<Party, BukkitPartiesPartyPreRenameEvent>() {
-			@Override
-			public Party get(BukkitPartiesPartyPreRenameEvent e) {
-				return e.getParty();
-			}
-		}, 0);
-		EventValues.registerEventValue(BukkitPartiesPartyPreRenameEvent.class, PartyPlayer.class, new Getter<PartyPlayer, BukkitPartiesPartyPreRenameEvent>() {
-			@Override
-			public PartyPlayer get(BukkitPartiesPartyPreRenameEvent e) {
-				return e.getPartyPlayer();
-			}
-		}, 0);
-		EventValues.registerEventValue(BukkitPartiesPartyPreRenameEvent.class, String.class, new Getter<String, BukkitPartiesPartyPreRenameEvent>() {
-			@Override
-			public String get(BukkitPartiesPartyPreRenameEvent e) {
-				return e.getNewPartyName();
-			}
-		}, 0);
-		EventValues.registerEventValue(BukkitPartiesPartyPreRenameEvent.class, CommandSender.class, new Getter<CommandSender, BukkitPartiesPartyPreRenameEvent>() {
-			@Override
-			public CommandSender get(BukkitPartiesPartyPreRenameEvent e) {
-				return e.getPartyPlayer() != null ? Bukkit.getPlayer(e.getPartyPlayer().getPlayerUUID()) : Bukkit.getConsoleSender();
-			}
-		}, 0);
+		EventValues.registerEventValue(BukkitPartiesPartyPreRenameEvent.class, Party.class, BukkitPartiesPartyPreRenameEvent::getParty, EventValues.TIME_NOW);
+		EventValues.registerEventValue(BukkitPartiesPartyPreRenameEvent.class, PartyPlayer.class, BukkitPartiesPartyPreRenameEvent::getPartyPlayer, EventValues.TIME_NOW);
+		EventValues.registerEventValue(BukkitPartiesPartyPreRenameEvent.class, String.class, BukkitPartiesPartyPreRenameEvent::getNewPartyName, EventValues.TIME_NOW);
+		EventValues.registerEventValue(BukkitPartiesPartyPreRenameEvent.class, CommandSender.class, e ->  e.getPartyPlayer() != null ? Bukkit.getPlayer(e.getPartyPlayer().getPlayerUUID()) : Bukkit.getConsoleSender(), EventValues.TIME_NOW);
 		
 		Skript.registerEvent("Party Post Rename", EvtPartyRename.class, BukkitPartiesPartyPostRenameEvent.class,
 				"[player] [post] rename[s] [a] party")
@@ -58,33 +38,13 @@ public class EvtPartyRename extends SelfRegisteringSkriptEvent {
 				.examples("on post rename party:",
 						"\tmessage \"Party %event-string% has been renamed to %name of event-party%\"")
 				.since("3.0.0");
-		EventValues.registerEventValue(BukkitPartiesPartyPostRenameEvent.class, Party.class, new Getter<Party, BukkitPartiesPartyPostRenameEvent>() {
-			@Override
-			public Party get(BukkitPartiesPartyPostRenameEvent e) {
-				return e.getParty();
-			}
-		}, 0);
-		EventValues.registerEventValue(BukkitPartiesPartyPostRenameEvent.class, PartyPlayer.class, new Getter<PartyPlayer, BukkitPartiesPartyPostRenameEvent>() {
-			@Override
-			public PartyPlayer get(BukkitPartiesPartyPostRenameEvent e) {
-				return e.getPartyPlayer();
-			}
-		}, 0);
-		EventValues.registerEventValue(BukkitPartiesPartyPostRenameEvent.class, String.class, new Getter<String, BukkitPartiesPartyPostRenameEvent>() {
-			@Override
-			public String get(BukkitPartiesPartyPostRenameEvent e) {
-				return e.getOldPartyName();
-			}
-		}, 0);
-		EventValues.registerEventValue(BukkitPartiesPartyPostRenameEvent.class, CommandSender.class, new Getter<CommandSender, BukkitPartiesPartyPostRenameEvent>() {
-			@Override
-			public CommandSender get(BukkitPartiesPartyPostRenameEvent e) {
-				return e.getPartyPlayer() != null ? Bukkit.getPlayer(e.getPartyPlayer().getPlayerUUID()) : Bukkit.getConsoleSender();
-			}
-		}, 0);
+		EventValues.registerEventValue(BukkitPartiesPartyPreRenameEvent.class, Party.class, BukkitPartiesPartyPreRenameEvent::getParty, EventValues.TIME_NOW);
+		EventValues.registerEventValue(BukkitPartiesPartyPreRenameEvent.class, PartyPlayer.class, BukkitPartiesPartyPreRenameEvent::getPartyPlayer, EventValues.TIME_NOW);
+		EventValues.registerEventValue(BukkitPartiesPartyPreRenameEvent.class, String.class, BukkitPartiesPartyPreRenameEvent::getNewPartyName, EventValues.TIME_NOW);
+		EventValues.registerEventValue(BukkitPartiesPartyPreRenameEvent.class, CommandSender.class, e ->  e.getPartyPlayer() != null ? Bukkit.getPlayer(e.getPartyPlayer().getPlayerUUID()) : Bukkit.getConsoleSender(), EventValues.TIME_NOW);
 	}
 	
-	final static Collection<Trigger> triggers = new ArrayList<>();
+	private static final List<Trigger> TRIGGERS = Collections.synchronizedList(new ArrayList<>());
 	
 	@Override
 	public boolean init(Literal<?>[] args, int matchedPattern, SkriptParser.ParseResult parseResult) {
@@ -92,18 +52,19 @@ public class EvtPartyRename extends SelfRegisteringSkriptEvent {
 	}
 	
 	@Override
-	public void register(Trigger trigger) {
-		triggers.add(trigger);
+	public boolean load() {
+		TRIGGERS.add(trigger);
+		return true;
 	}
 	
 	@Override
-	public void unregister(Trigger trigger) {
-		triggers.remove(trigger);
+	public void unload() {
+		TRIGGERS.remove(trigger);
 	}
 	
 	@Override
-	public void unregisterAll() {
-		triggers.clear();
+	public boolean check(Event event) {
+		throw new UnsupportedOperationException();
 	}
 	
 	@Override
