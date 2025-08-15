@@ -45,8 +45,6 @@
 	
 	<modules>
 		<module>api</module>
-		<module>bukkit</module>
-		<module>bungeecord</module>
 		<module>velocity</module>
 		<module>common</module>
 		<module>output</module>
