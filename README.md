@@ -1,6 +1,6 @@
 <p align="center"><img src="logo.png"></p>
 
-# Parties
+# Parties1
 <b>Parties</b> is an advanced plugin for Minecraft servers that allows the creation of parties (groups/clans/guilds) on your server.
 Everything is configurable and modular, if you don't want a feature, just disable it (it won't have a bad impact on the server).
 
