@@ -12,9 +12,9 @@ jobs:
 
     runs-on: ubuntu-latest
     
-    strategy:
-      matrix:
-        java-version: [11, 16, 17]
+    # strategy:
+    #   matrix:
+    #     java-version: [11, 16, 17]
 
     steps:
     - uses: actions/checkout@v3
@@ -25,3 +25,7 @@ jobs:
         java-version: 17
     - name: Build with Maven
       run: mvn -B package --file pom.xml
+    - name: Pack output file
+      uses: actions/upload-artifact@v4
+      with:
+        path: target
