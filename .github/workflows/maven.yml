@@ -28,4 +28,4 @@ jobs:
     - name: Pack output file
       uses: actions/upload-artifact@v4
       with:
-        path: target
+        path: .
